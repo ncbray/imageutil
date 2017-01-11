@@ -1,14 +1,9 @@
 package atlas
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
-
-func checkInt(actual int, expected int, t *testing.T) {
-	if actual != expected {
-		t.Errorf("%d != %d", actual, expected)
-	}
-}
 
 func testItems() []*Item {
 	return []*Item{
@@ -24,26 +19,26 @@ func testItems() []*Item {
 func TestPackSimple(t *testing.T) {
 	items := testItems()
 
-	boxW, boxH := PackSimple(items, 0)
+	boxW, boxH := PackSimple(SortItems(items, AREA_ORDER), 0)
 
-	checkInt(boxW, 64, t)
-	checkInt(boxH, 64, t)
+	assert.Equal(t, 64, boxW)
+	assert.Equal(t, 64, boxH)
 
-	checkInt(items[0].X, 50, t)
-	checkInt(items[0].Y, 20, t)
+	assert.Equal(t, 50, items[0].X)
+	assert.Equal(t, 20, items[0].Y)
 
-	checkInt(items[1].X, 0, t)
-	checkInt(items[1].Y, 30, t)
+	assert.Equal(t, 0, items[1].X)
+	assert.Equal(t, 30, items[1].Y)
 
-	checkInt(items[2].X, 30, t)
-	checkInt(items[2].Y, 0, t)
+	assert.Equal(t, 30, items[2].X)
+	assert.Equal(t, 0, items[2].Y)
 
-	checkInt(items[3].X, 30, t)
-	checkInt(items[3].Y, 20, t)
+	assert.Equal(t, 30, items[3].X)
+	assert.Equal(t, 20, items[3].Y)
 
-	checkInt(items[4].X, 0, t)
-	checkInt(items[4].Y, 20, t)
+	assert.Equal(t, 0, items[4].X)
+	assert.Equal(t, 20, items[4].Y)
 
-	checkInt(items[5].X, 0, t)
-	checkInt(items[5].Y, 0, t)
+	assert.Equal(t, 0, items[5].X)
+	assert.Equal(t, 0, items[5].Y)
 }

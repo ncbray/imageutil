@@ -15,7 +15,7 @@ func TestOrderByArea(t *testing.T) {
 		items[0],
 		items[1],
 	}
-	assert.Equal(t, expected, orderByArea(items))
+	assert.Equal(t, expected, SortItems(items, AREA_ORDER))
 }
 
 func TestOrderByHeight(t *testing.T) {
@@ -28,5 +28,7 @@ func TestOrderByHeight(t *testing.T) {
 		items[0],
 		items[1],
 	}
-	assert.Equal(t, expected, orderByHeight(items))
+	items = SortItems(items, WIDTH_ORDER)
+	items = SortItems(items, HEIGHT_ORDER)
+	assert.Equal(t, expected, items)
 }

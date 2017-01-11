@@ -9,7 +9,8 @@ type Item struct {
 	X int
 	Y int
 
-	id int
+	id     int
+	metric int
 }
 
 func (i *Item) area() int {
@@ -83,7 +84,6 @@ func PackSimple(items []*Item, padding int) (int, int) {
 	}
 	boxW, boxH := policy.MinimumArea(area)
 
-	items = orderByHeight(items)
 	for {
 		if tryPackSimple(items, padding, boxW, boxH) {
 			return boxW, boxH
@@ -165,12 +165,11 @@ func PackTree(items []*Item, padding int) (int, int) {
 	policy := &simpleSizePolicy{}
 	// TODO padding?
 	area := 0
-	for i := 0; i < len(items); i++ {
-		area += items[i].area()
+	for _, item := range items {
+		area += item.area()
 	}
 	boxW, boxH := policy.MinimumArea(area)
 
-	items = orderByArea(items)
 	for {
 		if tryPackTree(items, padding, boxW, boxH) {
 			return boxW, boxH

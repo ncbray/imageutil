@@ -4,70 +4,67 @@ import (
 	"sort"
 )
 
-type byHeight struct {
+type SortOrder int
+
+const (
+	WIDTH_ORDER SortOrder = iota
+	HEIGHT_ORDER
+	LARGEST_ORDER
+	PERIMETER_ORDER
+	AREA_ORDER
+)
+
+type byMetric struct {
 	Items []*Item
 }
 
-func (a byHeight) Len() int {
+func (a byMetric) Len() int {
 	return len(a.Items)
 }
 
-func (a byHeight) Swap(i, j int) {
+func (a byMetric) Swap(i, j int) {
 	a.Items[i], a.Items[j] = a.Items[j], a.Items[i]
 }
 
-func (a byHeight) Less(i, j int) bool {
-	if a.Items[i].Height != a.Items[j].Height {
-		return a.Items[i].Height > a.Items[j].Height
-	} else if a.Items[i].Width != a.Items[j].Width {
-		return a.Items[i].Width > a.Items[j].Width
+func (a byMetric) Less(i, j int) bool {
+	itemI := a.Items[i]
+	itemJ := a.Items[j]
+	if itemI.metric != itemJ.metric {
+		return itemI.metric > itemJ.metric
 	} else {
-		// Stable sort
-		return a.Items[i].id < a.Items[j].id
+		// Stablize sort on equal metrics
+		return itemI.id < itemJ.id
 	}
 }
 
-func orderByHeight(items []*Item) []*Item {
+func sortMetric(item *Item, order SortOrder) int {
+	switch order {
+	case WIDTH_ORDER:
+		return item.Width
+	case HEIGHT_ORDER:
+		return item.Height
+	case LARGEST_ORDER:
+		if item.Width > item.Height {
+			return item.Width
+		} else {
+			return item.Height
+		}
+	case PERIMETER_ORDER:
+		return item.Width + item.Height
+	case AREA_ORDER:
+		return item.Width * item.Height
+	default:
+		panic(order)
+	}
+}
+
+func SortItems(items []*Item, order SortOrder) []*Item {
 	for i, item := range items {
 		item.id = i
+		item.metric = sortMetric(item, order)
 	}
 	out := make([]*Item, len(items))
 	copy(out, items)
-	sort.Sort(byHeight{Items: out})
-	return out
-}
-
-type byArea struct {
-	Items []*Item
-}
-
-func (a byArea) Len() int {
-	return len(a.Items)
-}
-
-func (a byArea) Swap(i, j int) {
-	a.Items[i], a.Items[j] = a.Items[j], a.Items[i]
-}
-
-func (a byArea) Less(i, j int) bool {
-	areaI := a.Items[i].area()
-	areaJ := a.Items[j].area()
-	if areaI != areaJ {
-		return areaI > areaJ
-	} else if a.Items[i].Height != a.Items[j].Height {
-		return a.Items[i].Height > a.Items[j].Height
-	} else {
-		// Stable sort
-		return a.Items[i].id < a.Items[j].id
-	}
-}
-
-func orderByArea(items []*Item) []*Item {
-	for i, item := range items {
-		item.id = i
-	}
-	out := make([]*Item, len(items))
-	copy(out, items)
-	sort.Sort(byArea{Items: out})
+	sort.Sort(byMetric{Items: out})
 	return out
 }
